@@ -10,24 +10,26 @@ this is maybe the best solution for Golang right now.
 ```golang
 package main
 
-import "go.guoyk.net/cardanocli"
+import (
+	"go.guoyk.net/cardanocli"
+)
 
 func main() {
     cli := cardanocli.New()
     cli.SocketPath = "/path/to/cardano-node/node.socket"
 
     // example: get policy id from policy script
-    (
-        buf := &bytes.Buffer{}
+    {
+    	var policyID string
         // cardano-cli transaction policyid --script-file /path/to/policy.script
-        x := cli.Cmd().Transaction().Policyid().OptScriptFile("/path/to/policy.script").Exec()   
-        x.Stdout = buf
-        err := x.Run()
+        err := cli.Cmd().Transaction().
+        	Policyid().
+        	OptScriptFile("/path/to/policy.script").
+        	Run(cardanocli.CollectStdout(&policyID))
         if err != nil {
             panic(err)
         }
-        policyID := strings.TrimSpace(buf.String())
-    )
+    }
 }
 ```
 

@@ -46,8 +46,9 @@ func main() {
 			return
 		}
 
-		out.WriteString(fmt.Sprintf("\nfunc (c *Cmd) %s(%s) *Cmd {\n", ArgToFuncName(arg), NumToArgsIn(num)))
-		out.WriteString(fmt.Sprintf("    return c.Append(%s%s)\n", strconv.Quote(arg), NumToArgsOut(num)))
+		out.WriteString(fmt.Sprintf("\n// %s append argument '%s'\n", argToFuncName(arg), arg))
+		out.WriteString(fmt.Sprintf("func (c *Cmd) %s(%s) *Cmd {\n", argToFuncName(arg), argNumToArgsIn(num)))
+		out.WriteString(fmt.Sprintf("    return c.Arg(%s%s)\n", strconv.Quote(arg), argNumToArgsOut(num)))
 		out.WriteString("}\n")
 
 	}
@@ -55,7 +56,7 @@ func main() {
 	err = ioutil.WriteFile("args.go", out.Bytes(), 0640)
 }
 
-func ArgToFuncName(arg string) string {
+func argToFuncName(arg string) string {
 	name := ""
 	if strings.HasPrefix(arg, "--") {
 		name = "Opt"
@@ -72,7 +73,7 @@ func ArgToFuncName(arg string) string {
 	return name
 }
 
-func NumToArgsIn(num int) string {
+func argNumToArgsIn(num int) string {
 	if num == 0 {
 		return ""
 	}
@@ -83,7 +84,7 @@ func NumToArgsIn(num int) string {
 	return strings.Join(ins, ", ")
 }
 
-func NumToArgsOut(num int) string {
+func argNumToArgsOut(num int) string {
 	if num == 0 {
 		return ""
 	}
