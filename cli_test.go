@@ -23,6 +23,25 @@ func TestCli(t *testing.T) {
 
 }
 
+func TestCliJSON(t *testing.T) {
+	cli := New()
+	cli.Path = "echo"
+
+	type Data struct {
+		A string `json:"b"`
+	}
+	var data Data
+
+	err := cli.Cmd().Arg(`{"b":"hello"}`).Run(CollectStdoutJSON(&data))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if data.A != "hello" {
+		t.Fatal("not collected")
+	}
+}
+
 func TestCliEnv(t *testing.T) {
 	cli := New()
 	cli.Path = "env"
